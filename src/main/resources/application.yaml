@@ -71,10 +71,17 @@ spring:
               predicates:
                 - Path=/api/v1/customers/**
                 - Method=GET,OPTIONS
+            - id: product-catalog-list-route
+              uri: lb://product-catalog
+              predicates:
+                - Path=/api/v1/products
+                - Method=GET
+              filters:
+                - RemoveJsonAttributesResponseBody=shortDescription,mainImage,true
             - id: product-catalog-route
               uri: lb://product-catalog
               predicates:
-                - Path=/api/v1/products/{productId}/**,/api/v1/categories/**,/api/v1/upload-requests/**
+                - Path=/api/v1/products,/api/v1/products/**,/api/v1/categories/**,/api/v1/upload-requests/**
                 - Method=GET,POST,PUT,DELETE,OPTIONS
               filters:
                 - name: RequestRateLimiter
@@ -84,17 +91,20 @@ spring:
                       burstCapacity: 200
                       requestedTokens: 1
                     key-resolver: "#{@rateLimitKeyResolver}"
-            - id: product-catalog-list-route
-              uri: lb://product-catalog
-              predicates:
-                - Path=/api/v1/products
-                - Method=GET
-              filters:
-                - RemoveJsonAttributesResponseBody=shortDescription,mainImage,true
             - id: user-management-route
               uri: lb://authorization-server
               predicates:
                 - Path=/api/v1/users/**
+                - Method=GET,POST,PUT,DELETE,OPTIONS
+            - id: emails-route
+              uri: lb://notifications
+              predicates:
+                - Path=/api/v1/emails
+                - Method=POST,OPTIONS
+            - id: email-templates-route
+              uri: lb://notifications
+              predicates:
+                - Path=/api/v1/email-templates,/api/v1/email-templates/**
                 - Method=GET,POST,PUT,DELETE,OPTIONS
   data:
     redis:
