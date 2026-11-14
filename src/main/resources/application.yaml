@@ -66,6 +66,16 @@ spring:
                       - 502
                       - 504
                       - 500
+            - id: orders-metrics-route
+              uri: lb://ordering
+              predicates:
+                - Path=/api/v1/metrics/sales-overview,/api/v1/metrics/total-overview
+                - Method=GET,OPTIONS
+            - id: billing-metrics-route
+              uri: lb://billing
+              predicates:
+                - Path=/api/v1/metrics/payments-overview
+                - Method=GET,OPTIONS
             - id: customers-route
               uri: lb://ordering
               predicates:
